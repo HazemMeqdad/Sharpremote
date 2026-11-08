@@ -33,6 +33,7 @@ IR blaster (Xiaomi / Redmi / Poco / Honor and others). No internet or Wi-Fi need
    then **Find code…**.
 
 ## Code sources
-- Flipper-IRDB: `TVs/Sharp` (Sharp_LC-RC1-16, Sharp_TV2, Aquos)
+- Flipper-IRDB: `TVs/Sharp` (Sharp_LC-RC1-16, Sharp_TV2, Aquos) and
+  `_Converted_/IR_Plus/S/SHARP` (LC-40LE820X, GA857WJSA, GA538WJSA, TV-Generic)
+- LIRC config for Sharp remote 845-039-40B0 (FAV suggestion 17/143)
 - probonopd/irdb: `codes/Sharp/TV`
-"# Sharpremote" 

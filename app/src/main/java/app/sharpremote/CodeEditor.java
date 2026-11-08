@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import app.sharpremote.ir.CodeSets;
 import app.sharpremote.ir.IrCode;
 import app.sharpremote.ir.RemoteKey;
 
@@ -76,10 +77,7 @@ final class CodeEditor {
         command = Ui.numberField(activity);
         body.addView(command);
 
-        IrCode start = current != null ? current : finderBase;
-        protocol.setSelection(indexOf(start.protocol));
-        address.setText(format(start.protocol, start.address, true));
-        command.setText(format(start.protocol, start.command, false));
+        fill(current != null ? current : finderBase);
 
         protocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -94,6 +92,26 @@ final class CodeEditor {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+        IrCode[] likely = CodeSets.suggestions(key);
+        if (likely.length > 0) {
+            body.addView(label("Likely codes: tap one, watch the TV, then Save"));
+            LinearLayout line = null;
+            for (int i = 0; i < likely.length; i++) {
+                if (i % 2 == 0) {
+                    line = Ui.row(activity);
+                    body.addView(line);
+                }
+                IrCode c = likely[i];
+                Button b = Ui.button(activity, "Try " + c.describe());
+                b.setOnClickListener(v -> {
+                    fill(c);
+                    if (!sender.available()) toast("This phone has no IR blaster.");
+                    sender.send(c);
+                });
+                line.addView(b, Ui.weighted(1));
+            }
+        }
 
         LinearLayout actions = Ui.row(activity);
         actions.setPadding(0, Ui.dp(activity, 12), 0, 0);
@@ -144,6 +162,12 @@ final class CodeEditor {
                     }
                 }));
         dialog.show();
+    }
+
+    private void fill(IrCode c) {
+        protocol.setSelection(indexOf(c.protocol));
+        address.setText(format(c.protocol, c.address, true));
+        command.setText(format(c.protocol, c.command, false));
     }
 
     /** Reads the fields; shows a message and returns null if something is out of range. */
